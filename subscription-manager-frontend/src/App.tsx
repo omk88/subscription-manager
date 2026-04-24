@@ -38,7 +38,7 @@ function App() {
 
   return (
     <div className="App">
-      <h1>My Subscriptions</h1>
+      <h1>Cards</h1>
       
       {loading ? (
         <p>Loading cards...</p>
