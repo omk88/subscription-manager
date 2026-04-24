@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import LithicEmbediFrame from './LithicEmbediFrame'
 import './App.css'
 
 interface LithicCard {
@@ -18,7 +19,7 @@ function App() {
         const response = await fetch('http://localhost:3001/api/cards');
         
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error('Network response was not ok.');
         }
 
         const json = await response.json();
@@ -42,9 +43,14 @@ function App() {
       {loading ? (
         <p>Loading cards...</p>
       ) : (
-        <pre style={{ textAlign: 'left', background: '#222', color: '#fff', padding: '10px' }}>
-          {JSON.stringify(cards, null, 2)}
-        </pre>
+        <div className="card-list">
+          {cards.map(card => (
+            <div key={card.token} className="card-container">
+              <h3>{card.memo} (****{card.last_four})</h3>
+              <LithicEmbediFrame cardToken={card.token} />
+            </div>
+          ))}
+        </div>
       )}
     </div>
   )
