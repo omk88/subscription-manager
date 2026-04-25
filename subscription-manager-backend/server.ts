@@ -44,7 +44,7 @@ app.get('/api/cards', async (request: Request, response: Response) => {
     }
 });
 
-
+// Embed iFrame to display card details using Lithic's embed feature
 app.get('/api/cards/:token/embed', async (request: Request, response: Response) => {
     try {
         const { token } = request.params;
@@ -67,6 +67,30 @@ app.get('/api/cards/:token/embed', async (request: Request, response: Response) 
 
     } catch (error) {
         response.status(500).json({ error: "Failed to generate local HMAC." });
+    }
+});
+
+// Generate new card on Lithic and return the card details to the frontend
+app.post('/api/cards', async (request: Request, response: Response) => {
+    try {
+        const LITHIC_API_KEY = process.env.LITHIC_API_KEY;
+
+        const axios_response = await axios.post(
+            'https://sandbox.lithic.com/v1/cards',
+            {
+                type: 'SINGLE_USE', 
+                memo: `New Card ${new Date().toLocaleDateString()}`,
+                spend_limit: 1000 
+            },
+            {
+                headers: { 'Authorization': `api-key ${LITHIC_API_KEY}` }
+            }
+        );
+
+        response.json(axios_response.data);
+    } catch (error: any) {
+        console.error("Error creating card:", error.response?.data || error.message);
+        response.status(500).json({ error: "Failed to create card." });
     }
 });
 
