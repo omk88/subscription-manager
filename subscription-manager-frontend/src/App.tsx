@@ -14,6 +14,8 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
 
+  const [cardData, setCardData] = useState({pan: '', expiry: '', cvv: ''});
+
   useEffect(() => {
     const fetchCards = async () => {
       try {
@@ -58,8 +60,33 @@ function App() {
     }
   };
 
+    const handleLinkCard = async () => {
+      console.log("Creating card", cardData);
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  setCardData({
+    ...cardData,
+    [e.target.name]: e.target.value
+    });
+  };
+
   return (
     <div className="App">
+      <form className="card-form"
+      
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          marginBottom: '20px'
+        }}
+      >
+          <input name="pan" type="number" placeholder="PAN" value={cardData.pan} onChange={handleChange}/>
+          <input name="expiry" type="number" placeholder="Expiry" value={cardData.expiry} onChange={handleChange}/>
+          <input name="cvv" type="number" placeholder="CVV" value={cardData.cvv} onChange={handleChange}/>
+          <input type="button" value="+ Link Card" onClick={handleLinkCard} />
+      </form>
       <header style={{ 
         display: 'flex', 
         justifyContent: 'space-between', 
