@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import LithicEmbediFrame from './LithicEmbediFrame'
+import PlaidConnector from './PlaidLink';
 import './App.css'
 
 interface LithicCard {
@@ -73,6 +74,7 @@ function App() {
 
   return (
     <div className="App">
+    <PlaidConnector />
       <form className="card-form"
       
         style={{

@@ -3,6 +3,7 @@ import axios from 'axios';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import crypto from 'crypto';
+import { Configuration, PlaidApi, PlaidEnvironments, Products, CountryCode } from 'plaid';
 
 dotenv.config();
 
@@ -21,6 +22,18 @@ interface LithicCard {
 interface LithicResponse {
     data: LithicCard[];
 }
+
+const configuration = new Configuration({
+  basePath: PlaidEnvironments.sandbox, 
+  baseOptions: {
+    headers: {
+      'PLAID-CLIENT-ID': process.env.PLAID_CLIENT_ID,
+      'PLAID-SECRET': process.env.PLAID_SECRET,
+    },
+  },
+});
+
+export const plaidClient = new PlaidApi(configuration);
 
 // Generating a card with Lithic
 app.get('/api/cards', async (request: Request, response: Response) => {
@@ -92,6 +105,27 @@ app.post('/api/cards', async (request: Request, response: Response) => {
         console.error("Error creating card:", error.response?.data || error.message);
         response.status(500).json({ error: "Failed to create card." });
     }
+});
+
+
+// Create the initial Link Token
+app.post('/api/create_link_token', async (req, res) => {
+  const response = await plaidClient.linkTokenCreate({
+    user: { client_user_id: 'unique_user_id' },
+    client_name: 'Subscription Manager',
+    products: [Products.Auth, Products.Transactions],
+    country_codes: [CountryCode.Us],
+    language: 'en',
+  });
+  res.json(response.data);
+});
+
+// Exchange Public Token for Access Token
+app.post('/api/exchange_public_token', async (req, res) => {
+  const { public_token } = req.body;
+  const response = await plaidClient.itemPublicTokenExchange({public_token: public_token,});
+  const accessToken = response.data.access_token;
+  res.sendStatus(200);
 });
 
 
