@@ -122,10 +122,23 @@ app.post('/api/create_link_token', async (req, res) => {
 
 // Exchange Public Token for Access Token
 app.post('/api/exchange_public_token', async (req, res) => {
-  const { public_token } = req.body;
-  const response = await plaidClient.itemPublicTokenExchange({public_token: public_token,});
-  const accessToken = response.data.access_token;
-  res.sendStatus(200);
+  try {
+    const { public_token } = req.body;
+    const response = await plaidClient.itemPublicTokenExchange({
+      public_token: public_token,
+    });
+    
+    const accessToken = response.data.access_token;
+    const itemId = response.data.item_id;
+
+    console.log('Exchange successful!');
+    console.log('Access Token:', accessToken); 
+    
+    res.status(200).json({ success: true });
+  } catch (error) {
+    console.error('Exchange failed:', error);
+    res.status(500).json({ error: 'Failed to exchange token' });
+  }
 });
 
 

@@ -11,17 +11,25 @@ const PlaidConnector: React.FC = () => {
 
   useEffect(() => {
     const generateToken = async () => {
-      const response = await axios.post('http://localhost:3001/api/create_link_token');
-      setLinkToken(response.data.link_token);
+      try {
+        const response = await axios.post('http://localhost:3001/api/create_link_token');
+        setLinkToken(response.data.link_token);
+      } catch (error) {
+        console.error("Error fetching link token:", error);
+      }
     };
     generateToken();
   }, []);
 
   const onSuccess = useCallback<PlaidLinkOnSuccess>(async (public_token, metadata) => {
-    await axios.post('/api/exchange_public_token', {
-      public_token: public_token,
-    });
-    console.log('Success! Card connected.');
+    try {
+      await axios.post('http://localhost:3001/api/exchange_public_token', {
+        public_token: public_token,
+      });
+      console.log('Success! Card connected and token exchanged.');
+    } catch (error) {
+      console.error("Error exchanging public token:", error);
+    }
   }, []);
 
   const config: PlaidLinkOptions = {
@@ -32,9 +40,22 @@ const PlaidConnector: React.FC = () => {
   const { open, ready } = usePlaidLink(config);
 
   return (
-    <button onClick={() => open()} disabled={!ready}>
-      Connect Bank Account
-    </button>
+    <div style={{ textAlign: 'center', marginTop: '20px' }}>
+      <button 
+        onClick={() => open()} 
+        disabled={!ready}
+        style={{
+          padding: '10px 20px',
+          cursor: ready ? 'pointer' : 'not-allowed',
+          backgroundColor: ready ? '#007bff' : '#cccccc',
+          color: 'white',
+          border: 'none',
+          borderRadius: '5px'
+        }}
+      >
+        {ready ? 'Connect Bank Account' : 'Loading Plaid...'}
+      </button>
+    </div>
   );
 };
 
