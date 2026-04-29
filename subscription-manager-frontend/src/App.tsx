@@ -15,8 +15,6 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
 
-  const [cardData, setCardData] = useState({pan: '', expiry: '', cvv: ''});
-
   useEffect(() => {
     const fetchCards = async () => {
       try {
@@ -59,17 +57,6 @@ function App() {
     } finally {
       setIsCreating(false);
     }
-  };
-
-    const handleLinkCard = async () => {
-      console.log("Creating card", cardData);
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  setCardData({
-    ...cardData,
-    [e.target.name]: e.target.value
-    });
   };
 
   return (
