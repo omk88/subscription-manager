@@ -40,7 +40,7 @@ const PlaidConnector: React.FC = () => {
   const { open, ready } = usePlaidLink(config);
 
   return (
-    <div style={{ textAlign: 'center', marginTop: '20px' }}>
+    <div style={{ textAlign: 'right', padding: '20px' }}>
       <button 
         onClick={() => open()} 
         disabled={!ready}
