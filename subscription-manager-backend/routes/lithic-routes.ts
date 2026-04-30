@@ -65,20 +65,25 @@ router.post('/funding_source', async (req, res) => {
     const { processor_token } = req.body;
 
     const response = await axios.post(
-      `${LITHIC_BASE_URL}/financial_accounts`,
+      `${LITHIC_BASE_URL}/external_bank_accounts`,
       {
-        token: processor_token, 
-        type: 'CHECKING',
-        account_name: 'Primary Funding Source'
+        verification_method: "EXTERNALLY_VERIFIED", 
+        processor_token: processor_token, 
+        account_name: "Plaid Linked Account",
+        owner_type: "INDIVIDUAL"
       },
       {
-        headers: { 'Authorization': `api-key ${LITHIC_API_KEY}` }
+        headers: { 
+          'Authorization': `api-key ${LITHIC_API_KEY}`,
+          'Content-Type': 'application/json'
+        }
       }
     );
 
     res.json(response.data);
   } catch (error: any) {
-    res.status(500).json({ error: 'Failed to link funding source to Lithic' });
+    console.error("Lithic Final Attempt Error:", JSON.stringify(error.response?.data, null, 2));
+    res.status(500).json({ error: 'Failed to link bank' });
   }
 });
 

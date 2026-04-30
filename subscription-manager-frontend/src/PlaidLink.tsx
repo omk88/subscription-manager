@@ -20,20 +20,29 @@ const PlaidConnector: React.FC = () => {
     generateToken();
   }, []);
 
-  const onSuccess = useCallback<PlaidLinkOnSuccess>(async (public_token, metadata) => {
-    try {
-      const account_id = metadata.accounts[0].id;
+const onSuccess = useCallback<PlaidLinkOnSuccess>(async (public_token, metadata) => {
+  try {
+    const account_id = metadata.accounts[0].id;
 
-      await axios.post('http://localhost:3001/api/plaid/exchange_public_token', {
-        public_token: public_token,
-        account_id: account_id, 
-      });
+    const plaidResponse = await axios.post('http://localhost:3001/api/plaid/exchange_public_token', {
+      public_token: public_token,
+      account_id: account_id, 
+    });
 
-      console.log('Success! Processor token created and linked to Lithic.');
-    } catch (error) {
-      console.error("Error exchanging public token and creating processor token:", error);
-    }
-  }, []);
+    const { processor_token } = plaidResponse.data;
+
+    const lithicResponse = await axios.post('http://localhost:3001/api/lithic/funding_source', {
+      processor_token: processor_token
+    });
+
+    console.log('Success! Bank linked to Lithic:', lithicResponse.data);
+    alert("Bank account successfully linked as your funding source!");
+
+  } catch (error) {
+    console.error("Error in the bank linking flow:", error);
+    alert("Failed to link bank account. Check console for details.");
+  }
+}, []);
 
   const config: PlaidLinkOptions = {
     token: linkToken,
