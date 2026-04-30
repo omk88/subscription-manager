@@ -12,8 +12,7 @@ const PlaidConnector: React.FC = () => {
   useEffect(() => {
     const generateToken = async () => {
       try {
-        const response = await axios.post('http://localhost:3001/api/create_link_token');
-        setLinkToken(response.data.link_token);
+        const response = await axios.post('http://localhost:3001/api/plaid/create_link_token');        setLinkToken(response.data.link_token);
       } catch (error) {
         console.error("Error fetching link token:", error);
       }
@@ -23,7 +22,7 @@ const PlaidConnector: React.FC = () => {
 
   const onSuccess = useCallback<PlaidLinkOnSuccess>(async (public_token, metadata) => {
     try {
-      await axios.post('http://localhost:3001/api/exchange_public_token', {
+      await axios.post('http://localhost:3001/api/plaid/exchange_public_token', {
         public_token: public_token,
       });
       console.log('Success! Card connected and token exchanged.');
