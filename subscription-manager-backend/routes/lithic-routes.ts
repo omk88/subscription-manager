@@ -60,4 +60,26 @@ router.get('/cards/:token/embed', async (req: Request, res: Response) => {
     }
 });
 
+router.post('/funding_source', async (req, res) => {
+  try {
+    const { processor_token } = req.body;
+
+    const response = await axios.post(
+      `${LITHIC_BASE_URL}/financial_accounts`,
+      {
+        token: processor_token, 
+        type: 'CHECKING',
+        account_name: 'Primary Funding Source'
+      },
+      {
+        headers: { 'Authorization': `api-key ${LITHIC_API_KEY}` }
+      }
+    );
+
+    res.json(response.data);
+  } catch (error: any) {
+    res.status(500).json({ error: 'Failed to link funding source to Lithic' });
+  }
+});
+
 export default router;

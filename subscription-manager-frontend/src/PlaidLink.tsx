@@ -22,12 +22,16 @@ const PlaidConnector: React.FC = () => {
 
   const onSuccess = useCallback<PlaidLinkOnSuccess>(async (public_token, metadata) => {
     try {
+      const account_id = metadata.accounts[0].id;
+
       await axios.post('http://localhost:3001/api/plaid/exchange_public_token', {
         public_token: public_token,
+        account_id: account_id, 
       });
-      console.log('Success! Card connected and token exchanged.');
+
+      console.log('Success! Processor token created and linked to Lithic.');
     } catch (error) {
-      console.error("Error exchanging public token:", error);
+      console.error("Error exchanging public token and creating processor token:", error);
     }
   }, []);
 

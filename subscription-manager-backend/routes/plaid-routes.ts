@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { Products, CountryCode } from 'plaid';
+import { Products, CountryCode, ProcessorTokenCreateRequestProcessorEnum } from 'plaid';
 import { plaidClient } from '../config/plaid'; 
 
 const router = express.Router();
@@ -21,25 +21,27 @@ router.post('/create_link_token', async (req: Request, res: Response) => {
   }
 });
 
-router.post('/exchange_public_token', async (req: Request, res: Response) => {
+router.post('/exchange_public_token', async (req, res) => {
   try {
-    const { public_token } = req.body;
-    
-    const response = await plaidClient.itemPublicTokenExchange({
-      public_token: public_token,
-    });
-    
-    const accessToken = response.data.access_token;
-    const itemId = response.data.item_id;
+    const { public_token, account_id } = req.body; 
 
-    console.log('--- Plaid Exchange Successful ---');
-    console.log('Access Token:', accessToken);
-    console.log('Item ID:', itemId);
-    
-    res.status(200).json({ success: true });
+    const exchangeResponse = await plaidClient.itemPublicTokenExchange({ 
+        public_token 
+    });
+    const accessToken = exchangeResponse.data.access_token;
+
+    const processorRequest = {
+      access_token: accessToken,
+      account_id: account_id,
+      processor: ProcessorTokenCreateRequestProcessorEnum.Lithic,
+    };
+
+    const processorResponse = await plaidClient.processorTokenCreate(processorRequest);
+    const processorToken = processorResponse.data.processor_token;
+
+    res.json({ processor_token: processorToken });
   } catch (error: any) {
-    console.error('Plaid Token Exchange Failed:', error.response?.data || error.message);
-    res.status(500).json({ error: 'Failed to exchange token' });
+    res.status(500).json({ error: 'Failed to create processor token' });
   }
 });
 
