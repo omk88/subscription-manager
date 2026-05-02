@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import plaidRoutes from './routes/plaid-routes';
-import lithicRoutes from './routes/lithic-routes';
+import stripeRoutes from './routes/stripe-routes';
 
 dotenv.config();
 
@@ -12,7 +12,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use('/api/plaid', plaidRoutes);
-app.use('/api/lithic', lithicRoutes);
+app.use('/api/stripe', stripeRoutes); 
 
 app.get('/health', (req, res) => {
     res.status(200).json({ status: 'UP', timestamp: new Date().toISOString() });
@@ -23,5 +23,5 @@ app.listen(PORT, () => {
     console.log(`Server ready at http://localhost:${PORT}`);
     console.log(`Endpoints:`);
     console.log(` - Plaid: http://localhost:${PORT}/api/plaid`);
-    console.log(` - Lithic: http://localhost:${PORT}/api/lithic`);
+    console.log(` - Stripe: http://localhost:${PORT}/api/stripe`);
 });

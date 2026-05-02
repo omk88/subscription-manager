@@ -14,11 +14,11 @@ router.get('/cards', async (req: Request, res: Response) => {
 
 router.post('/cards', async (req: Request, res: Response) => {
     try {
-        const cardholderId = 'ich_...'; 
+        const cardholderId = 'ich_1TScIc3HKKLUqqOYSv1hThTe'; 
 
         const card = await stripe.issuing.cards.create({
             cardholder: cardholderId,
-            currency: 'usd',
+            currency: 'gbp',
             type: 'virtual',
             status: 'active',
         });
