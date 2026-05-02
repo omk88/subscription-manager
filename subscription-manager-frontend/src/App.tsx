@@ -114,7 +114,7 @@ function App() {
                     {card.metadata.memo || "Virtual Card"} (****{card.last4})
                   </h3>
                   
-                  {/* Replace Lithic component with Stripe Reveal component */}
+                  {}
                   <StripeCardReveal cardId={card.id} />
                 </div>
               ))
